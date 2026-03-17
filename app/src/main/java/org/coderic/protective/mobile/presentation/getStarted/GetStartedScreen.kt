@@ -2,7 +2,6 @@ package org.coderic.protective.mobile.presentation.getStarted
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseInElastic
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -21,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -65,7 +64,8 @@ fun ImageBackground(image: Int) {
         Image(
             painter = painterResource(id = it),
             contentDescription = "Pet Background",
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -84,6 +84,7 @@ fun BottomSheet(modifier: Modifier, getStartedViewModel: GetStartedViewModel) {
         animationSpec = tween(500, easing = EaseIn)
     ) {
         Column(
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -126,7 +127,7 @@ fun ButtonNext(text: Int, onClick: () -> Unit) {
             textAlign = TextAlign.Center
         )
         Icon(
-            imageVector = Icons.Filled.KeyboardArrowRight,
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = "Arrow"
         )
     }
@@ -204,7 +205,7 @@ fun Chipset(color: Color) {
 }
 
 fun getBorderColor(color: Color): Color {
-    return if (color.equals(Color.Transparent)) {
+    return if (color == Color.Transparent) {
         Color.LightGray
     } else {
         color
