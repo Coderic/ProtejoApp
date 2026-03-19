@@ -35,7 +35,7 @@ class StartActivity : ComponentActivity() {
                         startDestination = Routes.GetStarted.route
                     ) {
                         composable( Routes.InicioSesion.route ) {
-                            val loginViewModel = LoginViewModel( navController, this@StartActivity )
+                            val loginViewModel = LoginViewModel( this@StartActivity )
                             LoginScreen( loginViewModel )
                         }
                         composable( Routes.GetStarted.route ) {

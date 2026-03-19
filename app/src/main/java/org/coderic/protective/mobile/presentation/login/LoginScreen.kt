@@ -18,10 +18,13 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.coderic.protective.mobile.R
 import org.coderic.protective.mobile.ui.theme.PetCareContentText
 import org.coderic.protective.mobile.ui.theme.PetCareTextField
@@ -64,12 +68,14 @@ fun LoginScreen( loginViewModel: LoginViewModel ) {
 
 @Composable
 fun Body( modifier: Modifier, loginViewModel: LoginViewModel ) {
-    var email by remember {
-        mutableStateOf("")
-    }
-    var password by remember {
-        mutableStateOf("")
-    }
+    val uiState by loginViewModel.uiState.observeAsState(LoginUiState.Idle)
+
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    val isLoading = uiState is LoginUiState.Loading
+    val errorMessage = (uiState as? LoginUiState.Error)?.message
+
     Column(
         modifier = modifier.padding( 32.dp )
     ) {
@@ -83,12 +89,24 @@ fun Body( modifier: Modifier, loginViewModel: LoginViewModel ) {
 
         PetCareTextField(value = email, placeholder = R.string.placeholderEmail, Icons.Filled.Email, onValueChange = {
             email = it
+            if (uiState is LoginUiState.Error) loginViewModel.clearError()
         })
         Spacer(modifier = Modifier.height(16.dp))
         PetCareTextField(value = password, placeholder = R.string.placeholderPass, imageVector = Icons.Filled.Lock, onValueChange = {
             password = it
+            if (uiState is LoginUiState.Error) loginViewModel.clearError()
         })
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+            )
+        }
+
         TextButton(
             modifier = Modifier.align( Alignment.End ),
             onClick = { /* TODO: Implementar sistema de recuperación de contraseña. */ }
@@ -100,13 +118,18 @@ fun Body( modifier: Modifier, loginViewModel: LoginViewModel ) {
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .align(Alignment.CenterHorizontally),
-            onClick = { loginViewModel.onLoginButtonClick() },
+            onClick = { loginViewModel.onLoginButtonClick(email, password) },
+            enabled = !isLoading,
             shape = RoundedCornerShape(10.dp ),
             colors = ButtonDefaults.buttonColors(
                 containerColor = buttonHome
             )
         ) {
-            PetCareTitleText(text = stringResource(id = R.string.LOGIN), size = 22 )
+            if (isLoading) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(22.dp))
+            } else {
+                PetCareTitleText(text = stringResource(id = R.string.LOGIN), size = 22 )
+            }
         }
 
         // Divider
