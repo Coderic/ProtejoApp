@@ -3,7 +3,6 @@ package org.coderic.protective.mobile.domain
 import android.content.Context
 import org.coderic.protective.mobile.data.Almacenamiento
 import org.coderic.protective.mobile.data.MacronutrientPreferences
-import org.coderic.protective.mobile.model.datos.Gender
 import org.coderic.protective.mobile.model.datos.Pet
 
 class CasosUsoMascota( context: Context ) {
